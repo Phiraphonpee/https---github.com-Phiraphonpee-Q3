@@ -12,23 +12,34 @@ public class XO_NxN {
         row = sc.nextInt();
         System.out.print("Please select column borad: ");
         col = sc.nextInt();
-        for (int x = 0; x<=row; x++)
+        board_array = new String[row][col];
+        int countnum = 0;
+        for (int x = 0; x<row; x++)
         {
-            for (int y = 0; y<=col; y++)
+            for (int y = 0; y<col; y++)
             {
-                board_array[x][y] = " ";
+                countnum++;
+                if(countnum<10){
+                    board_array[x][y] = " " + Integer.toString(countnum);
+                }
+                else
+                {
+                    board_array[x][y] = Integer.toString(countnum);
+                }
             }
         }
     }
 
     public void display_board()
     {
-        for (int x = 0; x<=row; x++)
+        for (int x = 0; x<row; x++)
         {
-            for (int y = 0; y<=col; y++)
+            for (int y = 0; y<col; y++)
             {
-                System.out.println(board_array[x][y]);
+                System.out.printf("| %s |",board_array[x][y]);
+
             }
+            System.out.println();
         }
     }
 
@@ -55,9 +66,9 @@ public class XO_NxN {
                     System.out.print("Please select your position : ");
                     int position=sc.nextInt();
                     int arg = position-1;
-                    if (arg <= 8 && arg >= 0)
+                    if (arg <= (row*col - 1) && arg >= 0 )
                     {
-                        board_array[2-(arg%3)][arg/3] = player;
+                        board_array[arg/row][arg%col] = player;
                         done = true;
                     }
                     else
@@ -77,36 +88,81 @@ public class XO_NxN {
 
     public boolean check_winner()
     {
-        if (board_array[0][0] == board_array[0][1] && board_array[0][0] == board_array[0][2] && board_array[0][0] != " " || 
-            board_array[1][0] == board_array[1][1] && board_array[1][0] == board_array[1][2] && board_array[1][0] != " " || 
-            board_array[2][0] == board_array[2][1] && board_array[2][0] == board_array[2][2] && board_array[2][0] != " " || 
-            board_array[0][0] == board_array[1][0] && board_array[0][0] == board_array[2][0] && board_array[0][0] != " " || 
-            board_array[0][1] == board_array[1][1] && board_array[0][1] == board_array[2][1] && board_array[0][1] != " " || 
-            board_array[0][2] == board_array[1][2] && board_array[0][2] == board_array[2][2] && board_array[0][2] != " " || 
-            board_array[0][0] == board_array[1][1] && board_array[0][0] == board_array[2][2] && board_array[0][0] != " " || 
-            board_array[0][2] == board_array[1][1] && board_array[0][2] == board_array[2][0] && board_array[0][2] != " " )
+        int count1 = 0;
+        int count2 = 0;
+        int count3 = 0;
+        int count4 = 0;
+        //เช็คrow
+        for(int y=0; y<col; y++)
         {
-            if (player == "X")
+            for(int x=0; x<row-1; x++)
             {
-                System.out.println("Player O Win");
+                if(board_array[x][y] == board_array[x+1][y])
+                {
+                    count1++;
+                    if(count1 == col-1)
+                    {
+                        System.out.printf("Player %s Win",board_array[x][y]);
+                        return true;
+                    }
+                }
             }
-            else
-            {
-                System.out.println("Player X Win");
-            }
-            return true;
+            count1 = 0;
         }
-        else if (turn_count == 9)
+        //เช็คcolumn
+        for(int x=0; x<row; x++)
+        {
+            for(int y=0; y<col-1; y++)
+            {
+                if(board_array[x][y] == board_array[x][y+1])
+                {
+                    count2++;
+                    if(count2 == row-1)
+                    {
+                        System.out.printf("Player %s Win",board_array[x][y]);
+                        return true;
+                    }
+                }
+            }
+            count2 = 0;
+        }
+        //เช็คซ้ายบนไปขวาล่าง
+        for(int x=0; x<row-1; x++)
+        {
+            for(int y=0; y<col-1; y++)
+            {
+                if(x == y && board_array[x][y] == board_array[x+1][y+1])
+                {
+                    count3++;
+                    if(count3 == row-1)
+                    {
+                        System.out.printf("Player %s Win",board_array[x][y]);
+                        return true;
+                    }
+                }
+            }
+        }
+        //เช็คขวาบนไปซ้ายล่าง
+        for(int x=0; x<row-1; x++)
+        {
+           if (board_array[x][row-1-x] == board_array[x+1][row-2-x])
+           {
+               count4++;
+               if(count4 == row-1)
+               {
+                   System.out.printf("Player %s Win",board_array[x][row-1-x]);
+                   return true;
+               }
+           }
+        }
+        if(turn_count == row*col)
         {
             System.out.println("to end in a tie");
             return true;
         }
-        else
-        {
-            return false;
-        }
+        turn_count++;
+        return false;
     }
-
     public static void main(String[] args) {
 
         XO_NxN board = new XO_NxN();
@@ -119,5 +175,4 @@ public class XO_NxN {
 
         }
     }
-    
 }
